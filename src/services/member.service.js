@@ -40,6 +40,7 @@ const memberService = {
 		return createdMember;
 	},
 	login: async (username, email, password) => {
+		console.log({ username, email, password });
 		let member = null;
 		if (username) {
 			member = await db.Member.findOne({ where: { username } });

@@ -2,6 +2,8 @@ console.clear();
 // Charge les variables d'environnement du fichier .env dans process.env
 import "dotenv/config";
 
+import cors from "cors";
+
 // Importation du framework Express pour créer le serveur web
 import express from "express";
 // Importation de Morgan, un middleware de "logging" pour voir les requêtes HTTP dans la console
@@ -34,6 +36,12 @@ await db.sequelize.sync({ alter: true });
 
 // Initialisation de l'application Express
 const app = express();
+
+// ajout du middleware cors "cross origin sharing"
+// sécurité qui valide l'api auprès du navigateur
+app.use(cors({
+	origin: "*",
+}));
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 

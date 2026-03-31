@@ -68,7 +68,7 @@ export const canMemberRegisterToTournament = async (tournamentId, memberId) => {
 		);
 
 		// compute the player's age
-		const playerAge = dayjs().diff(dayjs(player.birthDate), "year");
+		const playerAge = dayjs().diff(dayjs(player.birthdate), "year");
 		if (playerAge < minAge || playerAge > maxAge) {
 			throw new PlayerIsOutOfTheCategoriesError();
 		}
@@ -79,6 +79,7 @@ export const canMemberRegisterToTournament = async (tournamentId, memberId) => {
 	if (nbrOfPlayers >= tournament.maxPlayers) {
 		throw new TournamentIsFullError();
 	}
+	return { tournament, player };
 };
 
 export const computePlayerScoreInATournament = async (

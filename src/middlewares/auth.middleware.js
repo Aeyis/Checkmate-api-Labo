@@ -8,7 +8,7 @@ import { decodeToken } from "../utils/jwt.utils.js";
 export const authentification = (req, res, next) => {
 	// Récupération du header "Authorization" (ex: "Bearer eyJhbG...")
 	const bearerToken = req.headers["authorization"];
-
+	console.log(bearerToken);
 	if (bearerToken) {
 		// Découpe la chaîne pour séparer le mot "Bearer" du "token" lui-même
 		const [bearer, token] = bearerToken.split(" ");

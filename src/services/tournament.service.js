@@ -164,6 +164,14 @@ const tournamentService = {
 		});
 		tournaments = await Promise.all(nbrOfPlayersPromises);
 
+
+		//boucle qui vérifie que pour chaque tournoi est en waiting et la date est passée = 'finished'
+		for (const tournament of tournaments) {
+			if (tournament.status === "waiting" && dayjs().isAfter(dayjs(tournament.endRegistrationDate))) {
+				tournament.status = 'finished';
+				await tournament.save();
+			}
+		}
 		if (requester) {
 			// check if the user is registered to each tournament
 			const isUserRegisteredPromises = tournaments.map(
@@ -208,13 +216,20 @@ const tournamentService = {
 				},
 				{
 					model: db.Member,
+
 					as: "players",
 					through: { attributes: [] }, // to exclude the join table attributes
 				},
+
 			],
 		});
 		if (!tournament) {
 			throw new TournamentNotFoundError();
+		}
+
+		if (tournament.status === 'waiting' && dayjs().isAfter(dayjs(tournament.endRegistrationDate))) {
+			tournament.status = 'finished';
+			await tournament.save();
 		}
 
 		if (requester) {
@@ -290,6 +305,11 @@ const tournamentService = {
 			throw new InvalidNumberOfPlayerError();
 		}
 
+		// check if the number of players is even
+		if (players.length % 2 !== 0) {
+			throw new InvalidNumberOfPlayerError();
+		}
+
 		tournament.status = "started";
 		tournament.currentRound = 1;
 
@@ -297,11 +317,6 @@ const tournamentService = {
 
 		// shuffle players
 		shuffle(players);
-
-		// if the number of players is odd, add a dummy player for the bye
-		if (players.length % 2 === 1) {
-			players.push(null);
-		}
 
 		const n = players.length;
 		const totalRoundsPerLeg = n - 1;
@@ -314,28 +329,18 @@ const tournamentService = {
 				const whitePlayer = playerList[i];
 				const blackPlayer = playerList[n - 1 - i];
 
-				if (whitePlayer && blackPlayer) {
-					matches.push({
-						tournamentId: tournament.id,
-						round: round + 1,
-						whitePlayerId: whitePlayer.id,
-						blackPlayerId: blackPlayer.id,
-					});
-				} else {
-					matches.push({
-						tournamentId: tournament.id,
-						round: round + 1,
-						whitePlayerId: whitePlayer.id,
-						blackPlayerId: null,
-						result: "bye",
-					});
-				}
+				matches.push({
+					tournamentId: tournament.id,
+					round: round + 1,
+					whitePlayerId: whitePlayer.id,
+					blackPlayerId: blackPlayer.id,
+				});
 			}
 			// rotate players for the next round
 			playerList.splice(1, 0, playerList.pop());
 		}
 
-		// generate the return matches and inserve the 2 players
+		// generate the return matches and inverse the 2 players
 		const returnMatches = matches.map(match => ({
 			tournamentId: match.tournamentId,
 			round: match.round + totalRoundsPerLeg,
@@ -368,6 +373,14 @@ const tournamentService = {
 		}
 
 		tournament.currentRound++;
+
+		//ajout fonction pointe round suivant, recup matches, et si aucuns match n'existe = terminé
+		const nextRoundMatches = await tournament.getMatches({
+			where:{ round: tournament.currentRound },
+		});
+		if (nextRoundMatches.length === 0) {
+			tournament.status = 'finished';
+		}
 		await tournament.save();
 	},
 
