@@ -15,6 +15,7 @@ export class MemberListingDto {
 		this.elo = member.elo;
 		this.email = member.email;
 		this.role = member.role;
+		this.tournaments = member.tournaments ? member.tournaments.map(t => ({ id: t.id, name: t.name})) : [];
 	}
 }
 

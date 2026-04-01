@@ -126,6 +126,14 @@ const memberService = {
 			offset: pagination.offset,
 			limit: pagination.limit,
 			order,
+			distinct: true,
+			include:[
+				{
+					model: db.Tournament,
+					as: "tournaments",
+					through:{ attributes: [] },
+				},
+			],
 		});
 		return { members, count };
 	},
