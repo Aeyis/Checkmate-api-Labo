@@ -73,6 +73,7 @@ export class TournamentDetailsDto {
 		);
 		this.isRegistered = tournament.isRegistered;
 		this.canRegister = tournament.canRegister;
+		this.womenOnly = tournament.womenOnly;
 	}
 }
 
