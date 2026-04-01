@@ -47,6 +47,10 @@ const memberController = {
 		);
 		res.status(200).send({ data: new MemberDto(updatedMember) });
 	},
+	delete: async (req, res) => {
+		await memberService.delete(req.params.id);
+		res.status(204).send();
+	},
 	getAll: async (req, res) => {
 		const {
 			username,

@@ -96,6 +96,13 @@ const memberService = {
 		const updatedMember = await member.update(data);
 		return updatedMember;
 	},
+	delete: async id => {
+		const member = await db.Member.findByPk(id);
+		if (!member) {
+			throw new MemberNotFoundError();
+		}
+		await member.destroy();
+	},
 	getAll: async (filter, pagination) => {
 		const where = {};
 		if (filter.username) {

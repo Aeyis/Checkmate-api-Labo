@@ -245,4 +245,10 @@ memberRouter.put(
 	memberController.updateById,
 );
 
+memberRouter.delete(
+	'/:id',
+	connected(["admin"]),
+	memberController.delete,
+);
+
 export default memberRouter;
