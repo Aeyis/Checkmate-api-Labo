@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import db from "../database/index.js";
 import { MatchNotFoundError } from "../custom-errors/match.error.js";
 import { TournamentIsNotRunningError } from "../custom-errors/tournament.error.js";
@@ -27,7 +28,7 @@ const matchService = {
 	getMyMatches: async (memberId) => {
 		return await db.Match.findAll({
 			where: {
-				[db.Sequelize.Op.or]: [
+				[Op.or]: [
 					{ whitePlayerId: memberId },
 					{ blackPlayerId: memberId },
 				],
