@@ -13,6 +13,7 @@ export const generateToken = user => {
 	const payload = {
 		id: user.id,
 		role: user.role,
+		gender: user.gender,
 	};
 
 	// Création du token signé
