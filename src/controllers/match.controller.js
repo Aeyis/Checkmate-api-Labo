@@ -9,6 +9,10 @@ const matchController = {
 
 		res.status(204).send();
 	},
+	getMyMatches: async (req, res) => {
+		const matches = await matchService.getMyMatches(req.user.id);
+		res.json(matches);
+	},
 };
 
 export default matchController;

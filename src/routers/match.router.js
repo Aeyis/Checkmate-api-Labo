@@ -57,5 +57,6 @@ matchRouter.patch(
 	bodyValidator(setResultValidator),
 	matchController.setResult,
 );
+matchRouter.get("/me", connected(), matchController.getMyMatches);
 
 export default matchRouter;

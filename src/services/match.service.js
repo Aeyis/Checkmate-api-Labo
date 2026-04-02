@@ -23,6 +23,22 @@ const matchService = {
 		match.result = result;
 		await match.save();
 	},
+
+	getMyMatches: async (memberId) => {
+		return await db.Match.findAll({
+			where: {
+				[db.Sequelize.Op.or]: [
+					{ whitePlayerId: memberId },
+					{ blackPlayerId: memberId },
+				],
+			},
+			include: [
+				{ model: db.Member, as: "whitePlayer" },
+				{ model: db.Member, as: "blackPlayer" },
+				{ model: db.Tournament, as: "tournament" },
+			],
+		});
+	},
 };
 
 export default matchService;
