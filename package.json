@@ -11,7 +11,8 @@
 		"test:run": "vitest run",
 		"coverage": "vitest run --coverage",
 		"dev:docker": "docker compose -f docker/docker-compose.yml -p checkmate up -d --build",
-		"dev:docker:seed": "docker compose -f docker/docker-compose.yml -p checkmate exec api node scripts/dev-seed-db.js"
+		"dev:docker:seed": "docker compose -f docker/docker-compose.yml -p checkmate exec api node scripts/dev-seed-db.js",
+		"create-admin:docker": "docker compose -f docker/docker-compose.yml -p checkmate exec api node scripts/create-admin.js"
 	},
 	"keywords": [],
 	"author": "",
