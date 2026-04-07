@@ -1,3 +1,4 @@
+import db from "../database/index.js";
 import {
 	RoundMatchesDto,
 	PlayerScoreDto,
@@ -181,6 +182,16 @@ const tournamentController = {
 			data: new RoundMatchesDto(round, matches),
 		});
 	},
+};
+export const uploadImage = async (req, res, next) => {
+	try {
+		const tournament = await db.Tournament.findByPk(req.params.id);
+		tournament.image = `/uploads/${req.file.filename}`;
+		await tournament.save();
+		res.json({ image: tournament.image });
+	} catch (e) {
+		next(e);
+	}
 };
 
 export default tournamentController;

@@ -10,6 +10,8 @@ import {
 	getAllTournamentsValidator,
 	registerTournamentValidator,
 } from "../validators/tournament.validator.js";
+import { upload } from "../middlewares/upload.middleware.js";
+import { uploadImage } from "../controllers/tournament.controller.js";
 
 const tournamentRouter = Router();
 
@@ -683,5 +685,13 @@ tournamentRouter.get(
  *         description: Tournoi non trouvé.
  */
 tournamentRouter.get("/:id/round/:round", tournamentController.getRoundMatches);
+
+// upload tournament image
+tournamentRouter.patch(
+	"/:id/image",
+	connected(["admin"]),
+	upload.single("image"),
+	uploadImage,
+);
 
 export default tournamentRouter;

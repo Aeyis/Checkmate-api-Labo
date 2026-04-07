@@ -54,6 +54,8 @@ const Tournament = sequelize.define(
 			type: DataTypes.DATE,
 			allowNull: false,
 		},
+		image : { type: DataTypes.STRING, allowNull: true
+		},
 	},
 	{
 		timestamps: true,
