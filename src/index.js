@@ -23,6 +23,7 @@ import router from "./routers/index.js";
 // Importation d'un middleware de sécurité pour vérifier l'identité de l'utilisateur (JWT, session, etc.)
 import { authentification } from "./middlewares/auth.middleware.js";
 import { swaggerOptions } from "./config/swagger.config.js";
+import tournamentService from "./services/tournament.service.js";
 
 // Extraction du port défini dans le fichier .env (ex: 3000)
 const { APP_PORT } = process.env;
@@ -73,3 +74,26 @@ app.listen(APP_PORT, () => {
 	console.log(`Web API available at http://localhost:${APP_PORT}`);
 	console.log(`Documentation available at http://localhost:${APP_PORT}/docs`);
 });
+
+// Vérifie toutes les 60 secondes si des tournois en attente ont dépassé
+// leur date de fin d'inscription, et les démarre automatiquement.
+setInterval(async () => {
+	const tournaments = await db.Tournament.findAll({
+		where: { status: "waiting" },
+	});
+
+	for (const tournament of tournaments) {
+		if (new Date(tournament.endRegistrationDate) <= new Date()) {
+			try {
+				await tournamentService.start(tournament.id);
+				console.log(
+					`Tournament ${tournament.id} a démarré.`,
+				);
+			} catch (e) {
+				console.warn(
+					`Tournament ${tournament.id} ne peut pas démarrer: ${e.message}`,
+				);
+			}
+		}
+	}
+}, 60_000); // toutes les 60 secondes

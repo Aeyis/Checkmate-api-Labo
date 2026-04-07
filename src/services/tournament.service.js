@@ -38,7 +38,7 @@ const tournamentService = {
 
 		// check end registration date
 		const validEndRegistrationDate = dayjs()
-			.add(data.minPlayers, "day")
+			.startOf("day")
 			.isSameOrBefore(dayjs(data.endRegistrationDate));
 		if (!validEndRegistrationDate) {
 			throw new InvalidEndRegistrationDateError();
